@@ -11,7 +11,7 @@ New York stock exchange data of seven years, between 2010 to 2016, is captured f
 
 ### **Domain**
 
-Banking, financial services and insurance **(**BFSI)
+Banking, financial services and insurance (BFSI)
 
 ### **Analysis to be done**
 
