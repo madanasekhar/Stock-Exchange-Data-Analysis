@@ -181,45 +181,49 @@
     ```sql
     -- Best-growing industry by each state, having at least two or more industries mapped
     
-    CREATE TABLE stock_growth_rate_by_industry AS
-    SELECT substr(c.headquarter,instr(c.headquarter,';')+2) STATE,
-            c.sub_industry,
-            round(avg(s.growth_rate),2) growth_rate
+    CREATE TABLE stock_growth_rate_by_state_industry AS
+    SELECT substr(c.headquarter,
+                  instr(c.headquarter,';')+2) STATE,
+                 c.sub_industry,
+                 round(avg(s.growth_rate),
+                       2) growth_rate,
+                      count(c.sub_industry) industry_count
     FROM nms_seda.stock_growth_rate_by_company s,
          nms_seda.stock_companies c
     WHERE s.company_name = c.company_name
-    GROUP BY substr(c.headquarter,instr(c.headquarter,';')+2),
-             c.sub_industry
-    HAVING count(c.sub_industry) > 2
+    GROUP BY substr(c.headquarter,
+                    instr(c.headquarter,';')+2), c.sub_industry
     ORDER BY STATE,
              growth_rate DESC;
     
-    SELECT STATE,
-           sub_industry,
-           growth_rate
-    FROM stock_growth_rate_by_industry;
+    SELECT s.state,
+           s.sub_industry,
+           s.growth_rate,
+           s.industry_count
+    FROM stock_growth_rate_by_state_industry s
+    WHERE s.industry_count > 2;
     ```
     
-    | state | sub_industry | growth_rate |
-    | --- | --- | --- |
-    | California | Internet Software & Services | 311.17 |
-    | California | Semiconductors | 236.4 |
-    | California | Health Care Equipment | 187.3 |
-    | California | REITs | 142.15 |
-    | California | Semiconductor Equipment | 122.69 |
-    | California | Application Software | 114.67 |
-    | Ireland | Pharmaceuticals | 209.36 |
-    | Massachusetts | Health Care Equipment | 175.15 |
-    | New Jersey | Health Care Equipment | 129.85 |
-    | New York | Diversified Financial Services | 275.17 |
-    | New York | Broadcasting & Cable TV | 163.52 |
-    | New York | Banks | 47.73 |
-    | New York | Apparel; Accessories & Luxury Goods | 45.14 |
-    | Ohio | Banks | 96.62 |
-    | Oklahoma | Oil & Gas Exploration & Production | 56.58 |
-    | Texas | Oil & Gas Refining & Marketing & Transportation | 161.02 |
-    | Texas | Oil & Gas Exploration & Production | 50.05 |
-    | Texas | Oil & Gas Equipment & Services | 4.89 |
+    | state | sub_industry | growth_rate | industry_count |
+    | --- | --- | --- | --- |
+    | California | Internet Software & Services | 311.17 | 10 |
+    | California | Semiconductors | 236.4 | 6 |
+    | California | Health Care Equipment | 187.3 | 4 |
+    | California | REITs | 142.15 | 4 |
+    | California | Semiconductor Equipment | 122.69 | 3 |
+    | California | Application Software | 114.67 | 4 |
+    | Ireland | Pharmaceuticals | 209.36 | 3 |
+    | Massachusetts | Health Care Equipment | 175.15 | 3 |
+    | New Jersey | Health Care Equipment | 129.85 | 3 |
+    | New York | Diversified Financial Services | 275.17 | 3 |
+    | New York | Broadcasting & Cable TV | 163.52 | 3 |
+    | New York | Banks | 47.73 | 4 |
+    | New York | Apparel; Accessories & Luxury Goods | 45.14 | 5 |
+    | Ohio | Banks | 96.62 | 3 |
+    | Oklahoma | Oil & Gas Exploration & Production | 56.58 | 3 |
+    | Texas | Oil & Gas Refining & Marketing & Transportation | 161.02 | 5 |
+    | Texas | Oil & Gas Exploration & Production | 50.05 | 11 |
+    | Texas | Oil & Gas Equipment & Services | 4.89 | 4 |
 - ***Pull worst, best, stable years by sector***
     
     ```sql
